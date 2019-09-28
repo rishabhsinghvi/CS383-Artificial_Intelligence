@@ -33,9 +33,13 @@ class GBFS(Agent):
             nodes_expanded += 1
 
             for neighbor in gridworld.successors(state):
+                """
                 if (neighbor not in seen and not self.exists_in_pq(pq, state)):
                     pq.put((manhattan_distance(neighbor, goal), neighbor, path + [neighbor]))
                 elif (neighbor not in seen and self.get_pq_value(pq, neighbor) > manhattan_distance(neighbor, goal)):
+                    pq.put((manhattan_distance(neighbor, goal), neighbor, path + [neighbor]))
+                """
+                if neighbor not in seen:
                     pq.put((manhattan_distance(neighbor, goal), neighbor, path + [neighbor]))
         
         return ([], 0, 0)

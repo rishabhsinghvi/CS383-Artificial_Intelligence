@@ -20,6 +20,8 @@ class UCS(Agent):
             cost, state, path = pq.get(block = False)
             seen.add(state)
 
+            #print(state)
+
             if state == goal:
                 return path, cost, nodes_expanded
             

@@ -30,10 +30,18 @@ class AStar(Agent):
             nodes_expanded += 1
 
             for neighbor in gridworld.successors(state):
+#                print(neighbor)
+                """
                 if (neighbor not in seen and not self.exists_in_pq(pq, state)):
                     pq.put((self.get_cost(gridworld, path + [neighbor]) + manhattan_distance(neighbor, goal), neighbor, path + [neighbor]))
-                elif (neighbor not in seen and self.get_pq_value(pq, neighbor) > (self.get_cost(gridworld, path + [neighbor]) + gridworld.cost(neighbor))):
+                elif (neighbor not in seen and (self.get_pq_value(pq, neighbor) > (self.get_cost(gridworld, path + [neighbor]) + gridworld.cost(neighbor)))):
                     pq.put((self.get_cost(gridworld, path + [neighbor]) + manhattan_distance(neighbor, goal), neighbor, path + [neighbor]))
+                """
+
+                if neighbor not in seen:
+                     pq.put((self.get_cost(gridworld, path + [neighbor]) + manhattan_distance(neighbor, goal), neighbor, path + [neighbor]))
+                
+            #print(pq.queue)
         
         return ([], 0, 0)
 
