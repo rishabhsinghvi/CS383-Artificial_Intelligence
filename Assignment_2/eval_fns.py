@@ -34,6 +34,10 @@ def my_eval_1(game, state):
     Hint: Think about why open_cells is not a very good evaluation function!
     How might you improve it?
     """
+    if game.is_terminal(state):
+        return game.utility(state)
+    else:
+        
     pass
 
 

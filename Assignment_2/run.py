@@ -2,10 +2,11 @@ from game import Game, State
 from random_agent import RandomAgent
 from minimax_agent import MinimaxAgent
 import random
-
+from eval_fns import *
+import math
 
 if __name__ == '__main__':
-    g = Game(3)
+    g = Game(7)
 
     # Example of setting a custom start state for the game
     # g.set_init_state(State(
@@ -14,6 +15,8 @@ if __name__ == '__main__':
     #      max_pos=(1, 1),
     #      min_to_play=True
     # ))
+
+    
 
     # You can set the random seed to make your tests repeatable
     # random.seed(43110)
@@ -28,7 +31,7 @@ if __name__ == '__main__':
 
     total_games = 0
     minimax_wins = 0
-    for _ in range(0, 1000):
+    for _ in range(0, 50):
         utility, moves = g.play(min_player, max_player, verbose = False)
         if utility == -1:
             minimax_wins += 1
