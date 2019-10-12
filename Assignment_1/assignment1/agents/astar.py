@@ -43,7 +43,7 @@ class AStar(Agent):
                 
             #print(pq.queue)
         
-        return ([], 0, 0)
+        return ([], 0, nodes_expanded)
 
 
         pass

@@ -35,7 +35,7 @@ class UCS(Agent):
                     pq.put((cost + gridworld.cost(neighbor), neighbor, path + [neighbor]))
                     
      
-        return ([], 0, 0)
+        return ([], 0, nodes_expanded)
     
 
     def exists_in_pq(self, pq, state):

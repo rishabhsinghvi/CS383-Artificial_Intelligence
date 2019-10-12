@@ -31,6 +31,6 @@ class BFS(Agent):
             for neighbor in neighbors:
                 to_visit.put((cost + gridworld.cost(neighbor), neighbor, path + [neighbor]))
             
-        return None
+        return [], 0, nodes_expanded
 
 
