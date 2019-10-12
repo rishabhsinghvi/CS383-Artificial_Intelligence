@@ -5,10 +5,16 @@ digits = range(1, 10)
 row_digits = '123456789'
 col_digits = row_digits
 
+# Each element in the board has own identifier, using row and cols
 element = [row + col for row in row_digits for col in col_digits]
+
+# List of rows
 rows = [[row + col for col in col_digits] for row in row_digits]
+
+# List of columns
 cols = [[row + col for row in row_digits] for col in col_digits]
 
+# List of squares
 squares = [['11', '12', '13', '21', '22', '23', '31', '32', '33'],
 ['14', '15', '16', '24', '25', '26', '34', '35', '36'],
 ['17', '18', '19', '27', '28', '29', '37', '38', '39'],
@@ -23,8 +29,8 @@ squares = [['11', '12', '13', '21', '22', '23', '31', '32', '33'],
 ]
 
 
+# We need to check all three
 group = [rows, cols, squares]
-#Surely a better way to do this?
 
 def solve_sudoku(board):
     sudoku = Problem()
