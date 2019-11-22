@@ -122,7 +122,7 @@ class CongressionalKMeans():
     def get_accuracy(self):
         line_count = 0
         
-        table = []
+        actual = []
         with open(self.path, 'r') as csvfile:
             csvreader = csv.reader(csvfile)
 
@@ -131,15 +131,15 @@ class CongressionalKMeans():
                     line_count += 1
                     continue
                 else:
-                    table.append(0 if row[3] == 'Republican' else 1)
+                    actual.append(0 if row[3] == 'Republican' else 1)
         
-        table2 = self.k_mean_obj.predict(self.votes)
+        predicted = self.k_mean_obj.predict(self.votes)
 
         total = 0
         correct = 0
 
-        for i in range(len(table)):
-            if table[i] == table2[i]:
+        for i in range(len(predicted)):
+            if predicted[i] == actual[i]:
                 correct += 1
             total += 1
         
@@ -156,3 +156,4 @@ if __name__ == '__main__':
     print(kmeans.predict(25))
     print(kmeans.predict(2))
     print(kmeans.get_accuracy())
+    print(kmeans.get_cluster_center(0))
