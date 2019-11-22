@@ -60,7 +60,7 @@ class CongressionalKMeans():
                     self.votes[line_count - 1] = to_numerical(row[5:])
                     line_count += 1
             
-            print(self.votes)
+            #print(self.votes)
 
         
 
@@ -109,7 +109,7 @@ class CongressionalKMeans():
         Return a numpy array of size (N,) containing center of the i-th cluster.
         (hint: see the documentation for sklearn.cluster.KMeans.cluster_centers_)
         """
-        return self.k_mean_obj.cluster_centers_
+        return self.k_mean_obj.cluster_centers_[i]
 
     def get_median_voter(self, i):
         """
@@ -117,7 +117,13 @@ class CongressionalKMeans():
         vote for each vote for the given cluster.
         (hint: Use np.round on the cluster center to convert votes to 0 or 1 (or other values that you use).)
         """
-        pass
+        center = self.get_cluster_center(i)
+
+        for i in range(len(center)):
+            center[i] = np.round(center[i])
+        
+        return center
+
 
     def get_accuracy(self):
         line_count = 0
@@ -156,4 +162,4 @@ if __name__ == '__main__':
     print(kmeans.predict(25))
     print(kmeans.predict(2))
     print(kmeans.get_accuracy())
-    print(kmeans.get_cluster_center(0))
+    print(kmeans.get_median_voter(0))

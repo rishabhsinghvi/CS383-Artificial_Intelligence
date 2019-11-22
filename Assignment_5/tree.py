@@ -19,6 +19,10 @@ class DataSet:
             self.examples = [row for row in csvreader]
             self.domains = [list(set(x)) for x in zip(*self.examples)]
 
+            # Debug
+
+
+
     def set_attrs(self, attrs):
         self.attributes = attrs
 
@@ -77,7 +81,7 @@ class Leaf:
         print('Predicted class:', self.pred_class)
 
 
-def learn_decision_tree(dataset, target_name, feature_names):
+def learn_decision_tree(dataset, target_name, feature_names, max_depth):
     """
     Trains a decision tree on the provided dataset.
     The `target_name` parameter is the name of the attribute to be predicted.
@@ -111,8 +115,26 @@ def learn_decision_tree(dataset, target_name, feature_names):
 
     def entropy(examples):
         """Takes a list of examples and returns their entropy w.r.t. the target attribute"""
+        possible_values = domains[target]
+        bucket = [0 for _ in possible_values]
 
+        for example in examples:
+            bucket[possible_values.index(example[target])] += 1
+
+        
+        #print(len(examples))
+        total_examples = sum(bucket)
+        entropy = 0
+        for el in bucket:
+            p_el = el / total_examples
+
+            entropy += (p_el * math.log2(p_el) if p_el != 0 else 0)
+        
+        #print(-entropy)
+        return -entropy if entropy != 0 else entropy
         # TODO: Implement the entropy function
+        
+
         pass
 
     def information_gain(parent, children):
@@ -120,10 +142,25 @@ def learn_decision_tree(dataset, target_name, feature_names):
         Takes a `parent` set and a subset `children` of the parent.
         Returns the information gain due to splitting `children` from `parent`.
         """
+        total = len(parent)
+        len_children = [len(child) for child in children]
+        
+        parent_entropy = entropy(parent)
+        children_entropy = []
+        for child in children:
+            children_entropy.append(entropy(child))
 
-        # TODO: Implement the information gain
-        pass
+        avg_entropy = 0
+        for i in range(len(children)):
+            avg_entropy += len_children[i]/total * children_entropy[i]
+        
+        
+        return parent_entropy - avg_entropy
+    
+    #debug
 
+    #entropy(dataset.examples)
+    #
     return decision_tree_learning(dataset.examples, features)
 
 
@@ -147,4 +184,5 @@ if __name__ == '__main__':
         ["Vote4", "Vote5", "Vote6", "Vote7"],
         2
     )
-    t.show()
+    
+    #t.show()
