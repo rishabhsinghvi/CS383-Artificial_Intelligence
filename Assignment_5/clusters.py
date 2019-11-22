@@ -3,22 +3,8 @@ import math
 import numpy as np
 from sklearn.cluster import KMeans
 
-"""def to_numerical(votes):
-    return [1 if (vote == 'Yea' or vote == 'Aye') else 0 for vote in votes]
-"""
-
 def to_numerical(votes):
-    list = [0 for _ in range(len(votes))]
-    for i in range(len(votes)):
-        if votes[i] == "Yea" or votes[i] == "Aye":
-            list[i] = 1
-        elif votes[i] == "Nay":
-            list[i] = 0
-        else:
-            list[i] = -1
-
-    return list
-
+    return [1 if (vote == 'Yea' or vote == 'Aye') else 0 for vote in votes]
 
 def to_string(votes):
     """
@@ -51,19 +37,20 @@ class CongressionalKMeans():
 
         self.k = k
         self.k_mean_obj = KMeans(self.k)
+        self.path = path_to_csv
         
         line_count = 0
         
         with open(path_to_csv, 'r') as csvfile:
             csvreader = csv.reader(csvfile)
             
-            M = len(next(csvreader)) - 5 # Votes
+            self.M = len(next(csvreader)) - 5 # Votes
             csvfile.seek(0)
-            N = sum(1 for row in csvreader) - 1   # Number of voters
+            self.N = sum(1 for row in csvreader) - 1   # Number of voters
             ##### TODO complete the constructor #####
             csvfile.seek(0)
             
-            self.votes = np.empty([N, M])
+            self.votes = np.empty([self.N, self.M])
             
             for row in csvreader:
                 if line_count == 0:
@@ -132,6 +119,32 @@ class CongressionalKMeans():
         """
         pass
 
+    def get_accuracy(self):
+        line_count = 0
+        
+        table = []
+        with open(self.path, 'r') as csvfile:
+            csvreader = csv.reader(csvfile)
+
+            for row in csvreader:
+                if line_count == 0:
+                    line_count += 1
+                    continue
+                else:
+                    table.append(0 if row[3] == 'Republican' else 1)
+        
+        table2 = self.k_mean_obj.predict(self.votes)
+
+        total = 0
+        correct = 0
+
+        for i in range(len(table)):
+            if table[i] == table2[i]:
+                correct += 1
+            total += 1
+        
+        return correct / total
+
 if __name__ == '__main__':
     """
     You can use this area to test your implementation and to generate
@@ -140,4 +153,6 @@ if __name__ == '__main__':
     kmeans = CongressionalKMeans('congress_data.csv', 2)
     kmeans.fit()
     print(kmeans.predict(0))
+    print(kmeans.predict(25))
     print(kmeans.predict(2))
+    print(kmeans.get_accuracy())
