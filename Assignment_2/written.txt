@@ -1,0 +1,81 @@
+Evaluation Function 1:
+The first evaluation function I chose computed the players' Manhattan distance from center of the board. It was based on the assumption that a player near the center of the board has more opportunities to move around than a player near the edge.
+
+Evaluation Function 2:
+
+
+The second evaluation function is a combination of the first function and open_cells. Now, instead of just using the Manhattan distance, the heuristic takes into account the number of moves available to each player as well as their
+position on the board. Combining them gives the utility.
+
+
+
+
+1) Your heuristic vs. my first heuristic
+
+
+The min_player used the open_cells evaluation function while the max_player used my_eval_1, with min_player to play first. It was played on a 5 x 5 board.
+
+
+Depth |   Games Played     |    MinPlayer    |    MaxPlayer   | 
+-------------------------------------------------------------------
+
+1     |          3         |        0        |        3       |
+-------------------------------------------------------------------
+
+2     |          3         |        0        |        3       |          
+-------------------------------------------------------------------
+
+3     |          3         |        0        |        3       |
+-------------------------------------------------------------------
+
+
+
+2) Your heuristic vs. my second heuristic
+
+
+The min_player used the open_cells evaluation function while the max_player used my_eval_2, with min_player to play first. It was played on a 5 x 5 board.
+
+
+Depth |   Games Played     |    MinPlayer    |    MaxPlayer   | 
+-------------------------------------------------------------------
+
+1     |          3         |        0        |        3       |
+-------------------------------------------------------------------
+
+2     |          3         |        0        |        3       |          
+-------------------------------------------------------------------
+
+3     |          3         |        0        |        3       |
+-------------------------------------------------------------------
+
+
+
+3) Your heuristic vs. my second heuristic
+
+
+The min_player used the my_eval_1 evaluation function while the max_player used my_eval_2, with min_player to play first. It was played on a 5 x 5 board.
+
+
+Depth |   Games Played     |    MinPlayer    |    MaxPlayer   | 
+-------------------------------------------------------------------
+
+1     |          3         |        0        |        3       |
+-------------------------------------------------------------------
+
+2     |          3         |        3        |        0       |          
+-------------------------------------------------------------------
+
+3     |          3         |        3        |        0       |
+-------------------------------------------------------------------
+
+
+Best function:
+
+
+my_eval_1
+
+
+Unlike open_cells, my_eval_1 considers the positions of the players as well. It is much more likely for a player, who is on the edge of the board, to be "trapped" than a player near the center of the board.
+
+
+
