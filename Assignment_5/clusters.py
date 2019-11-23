@@ -47,7 +47,7 @@ class CongressionalKMeans():
             self.M = len(next(csvreader)) - 5 # Votes
             csvfile.seek(0)
             self.N = sum(1 for row in csvreader) - 1   # Number of voters
-            ##### TODO complete the constructor #####
+            
             csvfile.seek(0)
             
             self.votes = np.empty([self.N, self.M])
@@ -158,8 +158,46 @@ if __name__ == '__main__':
     """
     kmeans = CongressionalKMeans('congress_data.csv', 2)
     kmeans.fit()
-    print(kmeans.predict(0))
-    print(kmeans.predict(25))
-    print(kmeans.predict(2))
+    # print(kmeans.predict(0))
+    # print(kmeans.predict(25))
+    # print(kmeans.predict(2))
     print(kmeans.get_accuracy())
-    print(kmeans.get_median_voter(0))
+    # print(kmeans.get_median_voter(0))
+    predicted = []
+
+    line_count = 0
+    rep = kmeans.get_median_voter(1)
+    dem = kmeans.get_median_voter(0)
+
+    total = len(rep)
+
+    print(rep)
+    print(dem)
+    non_rep_voters = 0
+    non_dem_voters = 0
+    for i in range(total):
+        if rep[i] == 1:
+            non_rep_voters += 1
+        if dem[i] != 1:
+            non_dem_voters += 1
+
+    print(non_rep_voters/total)
+    print(non_dem_voters/total)
+
+    #print(predicted)
+
+    
+    # with open('congress_data.csv', 'r') as csvfile:
+    #         csvreader = csv.reader(csvfile)
+
+    #         for row in csvreader:
+    #             if line_count == 0:
+    #                 line_count += 1
+    #                 continue
+    #             else:
+    #                 if predicted[line_count - 1] == 1 and row[3] == "Republican":
+    #                     diff.append([row[0], row[1], row[2]])
+    #                 elif predicted[line_count - 1] == 0 and row[3] == "Democrat":
+    #                     diff.append([row[0], row[1], row[2]])
+    #                 line_count += 1
+    

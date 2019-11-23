@@ -45,6 +45,69 @@ def information_gain(parent, children):
         return parent_entropy - avg_entropy
     
 
+domains = [
+    [1, 2, 3],
+    ['S', 'C']
+]
+
+
+
+def plurality_value(examples, target):
+        values = {}
+
+        for possible_value in domains[target]:
+            values[possible_value] = 0
+
+        for example in examples:
+            values[example[target]] += 1
+        
+
+        max = -1
+        pl_value = None
+
+        for k, v in values.items():
+            if v > max:
+                max = v
+                pl_value = k
+        
+        return pl_value
+        
+
+def split_on_attr(examples, attribute):
+        
+        num_splits = len(domains[attribute])
+        
+        children = {}
+
+        for possible_value in domains[attribute]:
+            children[possible_value] = list()
+
+        
+        for example in examples:
+            children[example[attribute]].append(example)
+        
+
+        children_list = []
+
+        for key, value in children.items():
+            children_list.append(value)
+
+        return children_list
+
+
+def split_on_attr_dict(examples, attribute):
+
+        children = {}
+
+        for possible_value in domains[attribute]:  # Create a list of each possible child
+            children[possible_value] = list()
+
+        
+        for example in examples:
+            children[example[attribute]].append(example)  # Add the record to suitable bucket
+
+        return children
+
 parent =  [
     [1, 'S'],
     [2, 'S'],
@@ -78,43 +141,45 @@ parent =  [
     [30, 'C'],
 ]
 
-child1 = [
-    [1, 'S'],
-    [2, 'C'],
-    [3, 'C'],
-    [4, 'C'],
-    [5, 'C'],
-    [6, 'C'],
-    [7, 'C'],
-    [8, 'C'],
-    [9, 'C'],
-    [10, 'C'],
-    [11, 'C'],
-    [12, 'C'],
-    [13, 'C'],
-]
+print(split_on_attr_dict(parent, 1))
 
-child2 = [
-    [1, 'S'],
-    [2, 'S'],
-    [3, 'S'],
-    [4, 'S'],
-    [5, 'S'],
-    [6, 'S'],
-    [7, 'S'],
-    [8, 'S'],
-    [9, 'S'],
-    [10, 'S'],
-    [11, 'S'],
-    [12, 'S'],
-    [13, 'S'],
-    [14, 'C'],
-    [15, 'C'],
-    [16, 'C'],
-    [17, 'C']
-]
+# child1 = [
+#     [1, 'S'],
+#     [2, 'C'],
+#     [3, 'C'],
+#     [4, 'C'],
+#     [5, 'C'],
+#     [6, 'C'],
+#     [7, 'C'],
+#     [8, 'C'],
+#     [9, 'C'],
+#     [10, 'C'],
+#     [11, 'C'],
+#     [12, 'C'],
+#     [13, 'C'],
+# ]
 
-print(entropy(parent, 1))
-print(entropy(child1, 1))
-print(entropy(child2, 1))
-print(information_gain(parent, [child1, child2]))
+# child2 = [
+#     [1, 'S'],
+#     [2, 'S'],
+#     [3, 'S'],
+#     [4, 'S'],
+#     [5, 'S'],
+#     [6, 'S'],
+#     [7, 'S'],
+#     [8, 'S'],
+#     [9, 'S'],
+#     [10, 'S'],
+#     [11, 'S'],
+#     [12, 'S'],
+#     [13, 'S'],
+#     [14, 'C'],
+#     [15, 'C'],
+#     [16, 'C'],
+#     [17, 'C']
+# ]
+
+# print(entropy(parent, 1))
+# print(entropy(child1, 1))
+# print(entropy(child2, 1))
+# print(information_gain(parent, [child1, child2]))

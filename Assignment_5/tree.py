@@ -1,6 +1,6 @@
 import csv
 import math
-
+import copy
 
 class DataSet:
     """
@@ -17,6 +17,36 @@ class DataSet:
             csvreader = csv.reader(csvfile)
             self.attributes = next(csvreader)
             self.examples = [row for row in csvreader]
+
+            # "Clean" dataset by changing any value not in the domain to the plurality vote
+            for j in range(len(self.examples[0])):
+                num_aye = 0
+                num_nay = 0
+
+                for i in range(len(self.examples)):
+
+                    if self.examples[i][j] == 'Aye' or self.examples[i][j] == 'Yea':
+                        num_aye += 1
+                    elif self.examples[i][j] == 'Nay':
+                        num_nay += 1
+            
+                if num_aye == 0 and num_nay == 0:
+            
+                    continue
+
+                max = num_aye if num_aye >= num_nay else num_nay
+
+                for i in range(len(self.examples)):
+            
+                    if self.examples[i][j] != 'Aye' and self.examples[i][j] != 'Nay':
+                        if self.examples[i][j] == 'Yea':
+                            self.examples[i][j] = 'Aye'
+                        elif max == num_aye:
+                            self.examples[i][j] = 'Aye'
+                        else:  
+                            self.examples[i][j] = 'Nay'
+    
+
             self.domains = [list(set(x)) for x in zip(*self.examples)]
 
             # Debug
@@ -50,6 +80,7 @@ class Node:
         """Classify an example based on its test attribute value."""
 
         # TODO: Implement the classify function here and in the Leaf class
+        return self.children[example[self.test_attr]].classify(example)
         pass
 
     def add_child(self, val, subtree):
@@ -73,8 +104,7 @@ class Leaf:
         self.pred_class = pred_class
 
     def classify(self, example):
-        # TODO: Implement the classify function here
-        pass
+        return self.pred_class
 
     def show(self):
         """This will be called by the Node `show` function"""
@@ -95,6 +125,10 @@ def learn_decision_tree(dataset, target_name, feature_names, max_depth):
     target = dataset.attributes.index(target_name)
     features = [dataset.attributes.index(name) for name in feature_names]
 
+    orig_features = features # Don't think we really need it, but oh well
+
+    
+
     def decision_tree_learning(examples, attrs, parent_examples=(), depth=0):
         """
         This function signature is written to match the pseudocode
@@ -111,7 +145,137 @@ def learn_decision_tree(dataset, target_name, feature_names, max_depth):
         # We recommend adding your own helper functions below too, but don't remove
         # any of the provided code.
         tree = None
+
+        print(str(depth) + " - " + str(len(examples)))
+
+
+        if len(examples) == 0:  # no more examples in this set
+            return Leaf(plurality_value(parent_examples, target))
+
+        elif entropy(examples) == 0:   # if homogeneous
+            return Leaf(plurality_value(examples, target))  # returns the classification (plurality value is the same as size of examples)
+        
+        elif entropy(examples) != 0 and depth == max_depth: # if reached max_depth without purity
+            return Leaf(plurality_value(examples, target))
+        
+        elif len(attrs) == 0:
+            return Leaf(plurality_value(examples, target))
+
+        #if none of the above are true, we can create a Node
+
+        A = get_max_importance(examples, attrs)
+
+        tree = Node(A)
+        
+        #print('Splitting on ' + str(dataset.attributes[A]))
+        
+        children = split_on_attr_dict(examples, A)
+
+        orig_list = copy.deepcopy(attrs)
+        orig_list.remove(A)
+        attr_name = dataset.attributes[A]
+
+        
+        for k, v in children.items():
+            
+            subtree = decision_tree_learning(v, orig_list, examples, depth + 1)
+
+            tree.add_child(k, subtree)
+
         return tree
+
+    
+
+    def split_on_attr(examples, attribute):
+        children = {}
+
+        for possible_value in domains[attribute]:  # Create a list of each possible child
+            children[possible_value] = list()
+
+        
+        for example in examples:
+            children[example[attribute]].append(example)  # Add the record to suitable bucket
+        
+
+        children_list = []
+
+        for key, value in children.items():
+            children_list.append(value)
+
+        return children_list
+        
+
+    def split_on_attr_dict(examples, attribute):
+
+        children = {}
+
+        for possible_value in domains[attribute]:  # Create a list of each possible child
+            children[possible_value] = list()
+
+        
+        for example in examples:
+            children[example[attribute]].append(example)  # Add the record to suitable bucket
+
+        return children
+            
+        
+
+    def plurality_value(examples, col):
+        values = {}
+
+        for possible_value in domains[col]:
+            values[possible_value] = 0
+
+        for example in examples:
+            values[example[col]] += 1
+        
+
+        max = -1
+        pl_value = None
+
+        for k, v in values.items():
+            if v > max:
+                max = v
+                pl_value = k
+        
+        return pl_value
+
+    
+
+
+
+
+    def get_max_importance(examples, attrs):
+
+
+
+        attr = attrs[0]
+        importance = -1000 # Some small value
+
+        for attribute in attrs:
+            children = split_on_attr(examples, attribute)
+
+            ig = information_gain(examples, children)
+
+            if ig > importance:  # if new information gain is more than current ig
+
+                importance = ig
+                attr = attribute
+            
+            elif ig == importance: # if new information is same as current ig, we break ties lexicographically
+                
+                if dataset.attributes[attribute].lower() < dataset.attributes[attr].lower():
+
+                    attr = attribute
+        
+
+        return attr
+
+
+
+
+
+
 
     def entropy(examples):
         """Takes a list of examples and returns their entropy w.r.t. the target attribute"""
@@ -121,9 +285,8 @@ def learn_decision_tree(dataset, target_name, feature_names, max_depth):
         for example in examples:
             bucket[possible_values.index(example[target])] += 1
 
-        
-        #print(len(examples))
         total_examples = sum(bucket)
+
         entropy = 0
         for el in bucket:
             p_el = el / total_examples
@@ -148,7 +311,10 @@ def learn_decision_tree(dataset, target_name, feature_names, max_depth):
         parent_entropy = entropy(parent)
         children_entropy = []
         for child in children:
-            children_entropy.append(entropy(child))
+            if len(child) == 0:
+                children_entropy.append(0)
+            else:
+                children_entropy.append(entropy(child))
 
         avg_entropy = 0
         for i in range(len(children)):
@@ -157,10 +323,9 @@ def learn_decision_tree(dataset, target_name, feature_names, max_depth):
         
         return parent_entropy - avg_entropy
     
-    #debug
+    
 
-    #entropy(dataset.examples)
-    #
+    # Finally...
     return decision_tree_learning(dataset.examples, features)
 
 
@@ -174,15 +339,15 @@ if __name__ == '__main__':
     ###### Example usage: ######
     ############################
 
-    data = DataSet("./congress_data.csv")
+    data = DataSet("./congress_small.csv")
 
     # An example of learning a decision tree to predict party affiliation
     # based on the values of votes 4-7
     t = learn_decision_tree(
         data,
-        "Party",
-        ["Vote4", "Vote5", "Vote6", "Vote7"],
-        2
+        "class",
+        ["vote35", "vote40", "vote18", "vote26", "vote32", "vote21", "vote1", "vote17", "vote11"],
+        5
     )
     
-    #t.show()
+    t.show()
